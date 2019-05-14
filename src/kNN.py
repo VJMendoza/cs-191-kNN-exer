@@ -60,31 +60,32 @@ def create_classifier(x_train, y_train, x_test, y_test, k=3):
 
 
 def use_diff_k(x_train, y_train):
-    k_list = list(range(1, 50))
+    k_list = list(range(1, 25))
     cv_scores = []
 
     for k in k_list:
         knn = KNeighborsClassifier(n_neighbors=k)
         scores = cross_val_score(
             knn, x_train, y_train, cv=10, scoring='accuracy')
+        print('At {0}: score is {1}'.format(k, scores.mean()))
         cv_scores.append(scores.mean())
 
-    mse = [1 - x for x in cv_scores]
-    return k_list, mse
+    acc = [x for x in cv_scores]
+    return k_list, acc
 
 
-def plot_results(k_list, mse):
+def plot_results(k_list, acc):
     plt.figure(figsize=(15, 10))
     plt.title('The optimal number of neighbors',
               fontsize=20, fontweight='bold')
     plt.xlabel('Number of Neighbors K', fontsize=15)
-    plt.ylabel('Misclassification Error', fontsize=15)
+    plt.ylabel('Accuracy', fontsize=15)
     sns.set_style("whitegrid")
-    plt.plot(k_list, mse)
+    plt.plot(k_list, acc)
     plt.show()
 
-    best_k = k_list[mse.index(min(mse))]
-    print('Optimal number of neighbors is {0}'.format([best_k]))
+    best_k = k_list[mse.index(max(acc))]
+    print('Optimal number of neighbors is {0}'.format(best_k))
 
 
 if __name__ == "__main__":
